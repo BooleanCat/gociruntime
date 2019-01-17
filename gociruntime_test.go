@@ -19,4 +19,22 @@ var _ = Describe("OCIRuntime", func() {
 			Expect(invocation(cmd)).To(Equal("railcar --foo bar"))
 		})
 	})
+
+	Describe("OCIRuntimeState", func() {
+		It("generates a state command with the provided container ID", func() {
+			cmd := gociruntime.OCI("railcar").State("super-container").Command()
+			Expect(invocation(cmd)).To(Equal("railcar state super-container"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				state := gociruntime.OCI("railcar").State("super-container")
+				cmd1 := state.Command()
+				cmd2 := state.Command()
+
+				Expect(invocation(cmd1)).To(Equal("railcar state super-container"))
+				Expect(invocation(cmd2)).To(Equal("railcar state super-container"))
+			})
+		})
+	})
 })

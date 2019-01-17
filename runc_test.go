@@ -138,4 +138,22 @@ var _ = Describe("RuncRuntime", func() {
 			Expect(invocation(cmd)).To(Equal("runc --debug --root /my/root --criu /my/criu"))
 		})
 	})
+
+	Describe("OCIRuntimeState", func() {
+		It("generates a state command with the provided container ID", func() {
+			cmd := gociruntime.Runc().State("super-container").Command()
+			Expect(invocation(cmd)).To(Equal("runc state super-container"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				state := gociruntime.Runc().State("super-container")
+				cmd1 := state.Command()
+				cmd2 := state.Command()
+
+				Expect(invocation(cmd1)).To(Equal("runc state super-container"))
+				Expect(invocation(cmd2)).To(Equal("runc state super-container"))
+			})
+		})
+	})
 })

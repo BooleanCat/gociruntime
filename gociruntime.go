@@ -19,3 +19,18 @@ func (r OCIRuntime) RawArgs(args ...string) OCIRuntime {
 func (r OCIRuntime) Command() *exec.Cmd {
 	return exec.Command(r.path, r.rawArgs...)
 }
+
+func (r OCIRuntime) State(containerID string) OCIRuntimeState {
+	return OCIRuntimeState{args: r.Command().Args, containerID: containerID}
+}
+
+type OCIRuntimeState struct {
+	args        []string
+	containerID string
+}
+
+func (s OCIRuntimeState) Command() *exec.Cmd {
+	cmd := exec.Command(s.args[0], s.args[1:]...)
+	cmd.Args = append(cmd.Args, "state", s.containerID)
+	return cmd
+}
