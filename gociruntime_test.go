@@ -12,4 +12,11 @@ var _ = Describe("OCIRuntime", func() {
 		cmd := gociruntime.OCI("railcar").Command()
 		Expect(invocation(cmd)).To(Equal("railcar"))
 	})
+
+	Describe(".RawArgs", func() {
+		It("appends raw args to the command", func() {
+			cmd := gociruntime.OCI("railcar").RawArgs("--foo", "bar").Command()
+			Expect(invocation(cmd)).To(Equal("railcar --foo bar"))
+		})
+	})
 })
