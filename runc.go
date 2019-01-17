@@ -79,6 +79,29 @@ func (r RuncRuntime) Version() RuncRuntime {
 	return r
 }
 
+func (r RuncRuntime) Delete(containerID string) RuncRuntimeDelete {
+	return RuncRuntimeDelete{OCIRuntimeDelete: r.OCIRuntime.Delete(containerID)}
+}
+
+type RuncRuntimeDelete struct {
+	OCIRuntimeDelete
+
+	force bool
+}
+
+func (r RuncRuntimeDelete) Command() *exec.Cmd {
+	cmd := r.OCIRuntimeDelete.Command()
+
+	cmd.Args = appendBoolArg(cmd.Args, "--force", r.force)
+
+	return cmd
+}
+
+func (r RuncRuntimeDelete) Force() RuncRuntimeDelete {
+	r.force = true
+	return r
+}
+
 func appendStringArg(args []string, flag, value string) []string {
 	if value == "" {
 		return args

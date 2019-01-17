@@ -156,4 +156,36 @@ var _ = Describe("RuncRuntime", func() {
 			})
 		})
 	})
+
+	Describe("OCIRuntimeDelete", func() {
+		It("generates a delete command with the provided container ID", func() {
+			cmd := gociruntime.Runc().Delete("super-container").Command()
+			Expect(invocation(cmd)).To(Equal("runc delete super-container"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				state := gociruntime.Runc().Delete("super-container")
+				cmd1 := state.Command()
+				cmd2 := state.Command()
+
+				Expect(invocation(cmd1)).To(Equal("runc delete super-container"))
+				Expect(invocation(cmd2)).To(Equal("runc delete super-container"))
+			})
+		})
+
+		Describe(".Force", func() {
+			It("does not include the force flag", func() {
+				cmd := gociruntime.Runc().Command()
+				Expect(cmd.Args).NotTo(ContainElement("--force"))
+			})
+
+			When("force is configured", func() {
+				It("includes the force flag", func() {
+					cmd := gociruntime.Runc().Delete("super-container").Force().Command()
+					Expect(invocation(cmd)).To(Equal("runc delete super-container --force"))
+				})
+			})
+		})
+	})
 })

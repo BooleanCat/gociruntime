@@ -24,13 +24,28 @@ func (r OCIRuntime) State(containerID string) OCIRuntimeState {
 	return OCIRuntimeState{args: r.Command().Args, containerID: containerID}
 }
 
+func (r OCIRuntime) Delete(containerID string) OCIRuntimeDelete {
+	return OCIRuntimeDelete{args: r.Command().Args, containerID: containerID}
+}
+
 type OCIRuntimeState struct {
 	args        []string
 	containerID string
 }
 
-func (s OCIRuntimeState) Command() *exec.Cmd {
-	cmd := exec.Command(s.args[0], s.args[1:]...)
-	cmd.Args = append(cmd.Args, "state", s.containerID)
+func (r OCIRuntimeState) Command() *exec.Cmd {
+	cmd := exec.Command(r.args[0], r.args[1:]...)
+	cmd.Args = append(cmd.Args, "state", r.containerID)
+	return cmd
+}
+
+type OCIRuntimeDelete struct {
+	args        []string
+	containerID string
+}
+
+func (r OCIRuntimeDelete) Command() *exec.Cmd {
+	cmd := exec.Command(r.args[0], r.args[1:]...)
+	cmd.Args = append(cmd.Args, "delete", r.containerID)
 	return cmd
 }
