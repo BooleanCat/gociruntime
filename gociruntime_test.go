@@ -64,12 +64,30 @@ var _ = Describe("OCIRuntime", func() {
 
 		When("a command is generated twice", func() {
 			It("is unique", func() {
-				state := gociruntime.OCI("railcar").Start("super-container")
-				cmd1 := state.Command()
-				cmd2 := state.Command()
+				start := gociruntime.OCI("railcar").Start("super-container")
+				cmd1 := start.Command()
+				cmd2 := start.Command()
 
 				Expect(invocation(cmd1)).To(Equal("railcar start super-container"))
 				Expect(invocation(cmd2)).To(Equal("railcar start super-container"))
+			})
+		})
+	})
+
+	Describe("OCIRuntimeKill", func() {
+		It("generates a kill command with the provided container ID", func() {
+			cmd := gociruntime.OCI("railcar").Kill("super-container", "TERM").Command()
+			Expect(invocation(cmd)).To(Equal("railcar kill super-container TERM"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				kill := gociruntime.OCI("railcar").Kill("super-container", "TERM")
+				cmd1 := kill.Command()
+				cmd2 := kill.Command()
+
+				Expect(invocation(cmd1)).To(Equal("railcar kill super-container TERM"))
+				Expect(invocation(cmd2)).To(Equal("railcar kill super-container TERM"))
 			})
 		})
 	})

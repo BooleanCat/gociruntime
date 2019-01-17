@@ -32,6 +32,10 @@ func (r OCIRuntime) Start(containerID string) OCIRuntimeStart {
 	return OCIRuntimeStart{args: r.Command().Args, containerID: containerID}
 }
 
+func (r OCIRuntime) Kill(containerID, signal string) OCIRuntimeKill {
+	return OCIRuntimeKill{args: r.Command().Args, containerID: containerID, signal: signal}
+}
+
 type OCIRuntimeState struct {
 	args        []string
 	containerID string
@@ -62,5 +66,17 @@ type OCIRuntimeStart struct {
 func (r OCIRuntimeStart) Command() *exec.Cmd {
 	cmd := exec.Command(r.args[0], r.args[1:]...)
 	cmd.Args = append(cmd.Args, "start", r.containerID)
+	return cmd
+}
+
+type OCIRuntimeKill struct {
+	args        []string
+	containerID string
+	signal      string
+}
+
+func (r OCIRuntimeKill) Command() *exec.Cmd {
+	cmd := exec.Command(r.args[0], r.args[1:]...)
+	cmd.Args = append(cmd.Args, "kill", r.containerID, r.signal)
 	return cmd
 }

@@ -139,7 +139,7 @@ var _ = Describe("RuncRuntime", func() {
 		})
 	})
 
-	Describe("OCIRuntimeState", func() {
+	Describe("RuncRuntimeState", func() {
 		It("generates a state command with the provided container ID", func() {
 			cmd := gociruntime.Runc().State("super-container").Command()
 			Expect(invocation(cmd)).To(Equal("runc state super-container"))
@@ -157,7 +157,7 @@ var _ = Describe("RuncRuntime", func() {
 		})
 	})
 
-	Describe("OCIRuntimeDelete", func() {
+	Describe("RuncRuntimeDelete", func() {
 		It("generates a delete command with the provided container ID", func() {
 			cmd := gociruntime.Runc().Delete("super-container").Command()
 			Expect(invocation(cmd)).To(Equal("runc delete super-container"))
@@ -189,7 +189,7 @@ var _ = Describe("RuncRuntime", func() {
 		})
 	})
 
-	Describe("OCIRuntimeStart", func() {
+	Describe("RuncRuntimeStart", func() {
 		It("generates a start command with the provided container ID", func() {
 			cmd := gociruntime.Runc().Start("super-container").Command()
 			Expect(invocation(cmd)).To(Equal("runc start super-container"))
@@ -203,6 +203,38 @@ var _ = Describe("RuncRuntime", func() {
 
 				Expect(invocation(cmd1)).To(Equal("runc start super-container"))
 				Expect(invocation(cmd2)).To(Equal("runc start super-container"))
+			})
+		})
+	})
+
+	Describe("RuncRuntimeKill", func() {
+		It("generates a kill command with the provided container ID", func() {
+			cmd := gociruntime.Runc().Kill("super-container", "TERM").Command()
+			Expect(invocation(cmd)).To(Equal("runc kill super-container TERM"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				kill := gociruntime.Runc().Kill("super-container", "TERM")
+				cmd1 := kill.Command()
+				cmd2 := kill.Command()
+
+				Expect(invocation(cmd1)).To(Equal("runc kill super-container TERM"))
+				Expect(invocation(cmd2)).To(Equal("runc kill super-container TERM"))
+			})
+		})
+
+		Describe(".All", func() {
+			It("does not include the all flag", func() {
+				cmd := gociruntime.Runc().Command()
+				Expect(cmd.Args).NotTo(ContainElement("--all"))
+			})
+
+			When("all is configured", func() {
+				It("includes the all flag", func() {
+					cmd := gociruntime.Runc().Kill("super-container", "TERM").All().Command()
+					Expect(invocation(cmd)).To(Equal("runc kill super-container TERM --all"))
+				})
 			})
 		})
 	})

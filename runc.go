@@ -83,6 +83,10 @@ func (r RuncRuntime) Delete(containerID string) RuncRuntimeDelete {
 	return RuncRuntimeDelete{OCIRuntimeDelete: r.OCIRuntime.Delete(containerID)}
 }
 
+func (r RuncRuntime) Kill(containerID, signal string) RuncRuntimeKill {
+	return RuncRuntimeKill{OCIRuntimeKill: r.OCIRuntime.Kill(containerID, signal)}
+}
+
 type RuncRuntimeDelete struct {
 	OCIRuntimeDelete
 
@@ -99,6 +103,25 @@ func (r RuncRuntimeDelete) Command() *exec.Cmd {
 
 func (r RuncRuntimeDelete) Force() RuncRuntimeDelete {
 	r.force = true
+	return r
+}
+
+type RuncRuntimeKill struct {
+	OCIRuntimeKill
+
+	all bool
+}
+
+func (r RuncRuntimeKill) Command() *exec.Cmd {
+	cmd := r.OCIRuntimeKill.Command()
+
+	cmd.Args = appendBoolArg(cmd.Args, "--all", r.all)
+
+	return cmd
+}
+
+func (r RuncRuntimeKill) All() RuncRuntimeKill {
+	r.all = true
 	return r
 }
 
