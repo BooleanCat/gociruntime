@@ -1,9 +1,10 @@
 package gociruntime_test
 
 import (
-	"github.com/BooleanCat/gociruntime"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/BooleanCat/gociruntime"
 )
 
 var _ = Describe("OCIRuntime", func() {
