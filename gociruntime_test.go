@@ -55,4 +55,22 @@ var _ = Describe("OCIRuntime", func() {
 			})
 		})
 	})
+
+	Describe("OCIRuntimeStart", func() {
+		It("generates a start command with the provided container ID", func() {
+			cmd := gociruntime.OCI("railcar").Start("super-container").Command()
+			Expect(invocation(cmd)).To(Equal("railcar start super-container"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				state := gociruntime.OCI("railcar").Start("super-container")
+				cmd1 := state.Command()
+				cmd2 := state.Command()
+
+				Expect(invocation(cmd1)).To(Equal("railcar start super-container"))
+				Expect(invocation(cmd2)).To(Equal("railcar start super-container"))
+			})
+		})
+	})
 })

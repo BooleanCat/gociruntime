@@ -188,4 +188,22 @@ var _ = Describe("RuncRuntime", func() {
 			})
 		})
 	})
+
+	Describe("OCIRuntimeStart", func() {
+		It("generates a start command with the provided container ID", func() {
+			cmd := gociruntime.Runc().Start("super-container").Command()
+			Expect(invocation(cmd)).To(Equal("runc start super-container"))
+		})
+
+		When("a command is generated twice", func() {
+			It("is unique", func() {
+				state := gociruntime.Runc().Start("super-container")
+				cmd1 := state.Command()
+				cmd2 := state.Command()
+
+				Expect(invocation(cmd1)).To(Equal("runc start super-container"))
+				Expect(invocation(cmd2)).To(Equal("runc start super-container"))
+			})
+		})
+	})
 })

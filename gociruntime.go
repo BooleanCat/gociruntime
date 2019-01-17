@@ -28,6 +28,10 @@ func (r OCIRuntime) Delete(containerID string) OCIRuntimeDelete {
 	return OCIRuntimeDelete{args: r.Command().Args, containerID: containerID}
 }
 
+func (r OCIRuntime) Start(containerID string) OCIRuntimeStart {
+	return OCIRuntimeStart{args: r.Command().Args, containerID: containerID}
+}
+
 type OCIRuntimeState struct {
 	args        []string
 	containerID string
@@ -47,5 +51,16 @@ type OCIRuntimeDelete struct {
 func (r OCIRuntimeDelete) Command() *exec.Cmd {
 	cmd := exec.Command(r.args[0], r.args[1:]...)
 	cmd.Args = append(cmd.Args, "delete", r.containerID)
+	return cmd
+}
+
+type OCIRuntimeStart struct {
+	args        []string
+	containerID string
+}
+
+func (r OCIRuntimeStart) Command() *exec.Cmd {
+	cmd := exec.Command(r.args[0], r.args[1:]...)
+	cmd.Args = append(cmd.Args, "start", r.containerID)
 	return cmd
 }
